@@ -4,8 +4,8 @@ project(MyKahoot LANGUAGES CXX)
 set(SOURCES
   src/main.cpp
   src/game.hpp
-  src/server.hpp
-  src/server.cpp
+  src/server_setup.hpp
+  src/server_setup.cpp
   src/file_descriptor.hpp
 )
 
