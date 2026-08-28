@@ -1,0 +1,33 @@
+BasedOnStyle: LLVM
+Standard: c++20
+BreakBeforeBraces: Allman
+IndentWidth: 2
+UseTab: Never
+ColumnLimit: 100
+
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowAllArgumentsOnNextLine: false
+AlignAfterOpenBracket: Align
+AlwaysBreakTemplateDeclarations: Yes
+
+BinPackArguments: false
+BinPackParameters: false
+
+NamespaceIndentation: All
+
+PointerAlignment: Left
+
+SortIncludes: true
+IncludeBlocks: Regroup
+
+IncludeCategories:
+  - Regex: '^".*"'
+    Priority: 1
+
+  - Regex: '^<linux/.*>$'
+    Priority: 2
+
+  - Regex: '^<[^/]+>$'
+    Priority: 3

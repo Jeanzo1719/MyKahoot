@@ -1,0 +1,8 @@
+# neocmake cache
+.cache
+
+# backend compiled artifacts
+backend/build/
+backend/build/*
+
+backend/compile_commands.json
