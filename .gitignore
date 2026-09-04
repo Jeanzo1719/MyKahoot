@@ -6,3 +6,6 @@ backend/build/
 backend/build/*
 
 backend/compile_commands.json
+
+# credenciales reales de la base de datos (solo deben existir en Hostinger)
+frontend/api/config.php

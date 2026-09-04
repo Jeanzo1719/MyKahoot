@@ -157,6 +157,7 @@ const QUESTION_BANK = [
 ];
 
 const QUESTIONS_PER_ROUND = 6;
+const LEADERBOARD_API = 'api/leaderboard.php';
 
 const quiz = {
   quiz_questions: [],
@@ -169,8 +170,11 @@ const formScreen = document.getElementById('form-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const roundScreen = document.getElementById('round-screen');
 const resultsScreen = document.getElementById('results-screen');
+const leaderboardScreen = document.getElementById('leaderboard-screen');
 
 const startButton = document.getElementById('start-button');
+const leaderboardButton = document.getElementById('leaderboard-button');
+const leaderboardBackButton = document.getElementById('leaderboard-back-button');
 const playerForm = document.getElementById('player-form');
 const playerNameInput = document.getElementById('player-name');
 const restartButton = document.getElementById('restart-button');
@@ -190,8 +194,13 @@ const roundListEl = document.getElementById('round-list');
 const resultsListEl = document.getElementById('results-list');
 const confettiEl = document.getElementById('confetti');
 
+const resultsGlobalListEl = document.getElementById('results-global-list');
+const resultsResetLabelEl = document.getElementById('results-reset-label');
+const leaderboardListEl = document.getElementById('leaderboard-list');
+const leaderboardResetLabelEl = document.getElementById('leaderboard-reset-label');
+
 function showScreen(screen) {
-  for (const s of [startScreen, formScreen, quizScreen, roundScreen, resultsScreen]) {
+  for (const s of [startScreen, formScreen, quizScreen, roundScreen, resultsScreen, leaderboardScreen]) {
     s.classList.toggle('hidden', s !== screen);
   }
 
@@ -221,10 +230,93 @@ themeToggleButton.addEventListener('click', () => {
 
 initTheme();
 
+// --- Global leaderboard (backend) ---
+
+async function submitScore(player) {
+  try {
+    await fetch(LEADERBOARD_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        player_name: player.player_name,
+        player_score: player.player_score,
+      }),
+    });
+  } catch (error) {
+    console.error('No se pudo enviar el puntaje al ranking global.', error);
+  }
+}
+
+async function fetchLeaderboard() {
+  try {
+    const response = await fetch(LEADERBOARD_API);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('No se pudo cargar el ranking global.', error);
+    return null;
+  }
+}
+
+function formatResetLabel(resetAtIso) {
+  if (!resetAtIso) {
+    return '';
+  }
+
+  const diffMinutes = Math.max(0, Math.round((new Date(resetAtIso).getTime() - Date.now()) / 60000));
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+
+  if (hours > 0) {
+    return `Se reinicia en ${hours}h ${minutes}min`;
+  }
+
+  return `Se reinicia en ${minutes} min`;
+}
+
+function renderGlobalLeaderboard(listEl, labelEl, data) {
+  listEl.innerHTML = '';
+
+  if (!data || data.players.length === 0) {
+    const item = document.createElement('li');
+    item.textContent = 'Aún no hay puntajes en este período.';
+    listEl.appendChild(item);
+  } else {
+    for (const player of data.players) {
+      const item = document.createElement('li');
+
+      if (player.position === 1) {
+        item.classList.add('winner');
+      }
+
+      item.textContent = `#${player.position} ${player.player_name} — ${player.player_score} punto${player.player_score === 1 ? '' : 's'}`;
+      listEl.appendChild(item);
+    }
+  }
+
+  if (labelEl) {
+    labelEl.textContent = data ? formatResetLabel(data.reset_at) : '';
+  }
+}
+
 // --- Game flow ---
 
 startButton.addEventListener('click', () => {
   showScreen(formScreen);
+});
+
+leaderboardButton.addEventListener('click', async () => {
+  showScreen(leaderboardScreen);
+  const data = await fetchLeaderboard();
+  renderGlobalLeaderboard(leaderboardListEl, leaderboardResetLabelEl, data);
+});
+
+leaderboardBackButton.addEventListener('click', () => {
+  showScreen(startScreen);
 });
 
 playerForm.addEventListener('submit', (event) => {
@@ -376,10 +468,19 @@ function showRoundResults() {
   showScreen(roundScreen);
 }
 
-function showResults() {
+async function showResults() {
   buildRankingList(resultsListEl, true);
   showScreen(resultsScreen);
   launchConfetti();
+
+  const [player] = quiz.quiz_players;
+
+  if (player) {
+    await submitScore(player);
+  }
+
+  const data = await fetchLeaderboard();
+  renderGlobalLeaderboard(resultsGlobalListEl, resultsResetLabelEl, data);
 }
 
 function animateScoreCount(el, target) {
@@ -430,5 +531,6 @@ restartButton.addEventListener('click', () => {
   progressFillEl.style.width = '0%';
   feedbackEl.classList.add('hidden');
   confettiEl.innerHTML = '';
+  resultsGlobalListEl.innerHTML = '';
   showScreen(startScreen);
 });
