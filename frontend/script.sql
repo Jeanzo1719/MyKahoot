@@ -35,13 +35,3 @@ SELECT
     played_at,
     ROW_NUMBER() OVER (ORDER BY player_score DESC, played_at ASC) AS player_position
 FROM players;
-
--- -------------------------------------------------------------
---  Datos de ejemplo (opcional, puedes borrar)
--- -------------------------------------------------------------
-INSERT INTO players (session_id, player_name, player_score) VALUES
-  ('demo-001', 'Ana',     14),
-  ('demo-001', 'Luis',    12),
-  ('demo-001', 'Sofía',   16),
-  ('demo-001', 'Pedro',   9),
-  ('demo-001', 'María',   13);
