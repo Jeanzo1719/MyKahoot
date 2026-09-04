@@ -31,11 +31,19 @@
       <div class="progress-bar">
         <div class="progress-bar-fill" id="progress-fill"></div>
       </div>
-      <div class="timer-bar">
-        <div class="timer-bar-fill" id="timer-fill"></div>
-      </div>
       <h2 id="question-text"></h2>
       <div id="answers" class="answers"></div>
+      <div id="feedback" class="feedback hidden">
+        <p id="feedback-text" class="feedback-text"></p>
+        <button id="next-button" type="button">Siguiente</button>
+      </div>
+    </section>
+
+    <section id="round-screen" class="screen hidden">
+      <h2 id="round-title">Fin de la ronda</h2>
+      <p id="round-subtitle" class="round-subtitle"></p>
+      <ol id="round-list" class="results-list"></ol>
+      <button id="round-continue" type="button">Continuar</button>
     </section>
 
     <section id="results-screen" class="screen hidden">

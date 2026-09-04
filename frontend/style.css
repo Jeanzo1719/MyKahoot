@@ -263,6 +263,39 @@ button:active {
   animation: shake 0.4s ease;
 }
 
+.feedback {
+  margin-top: 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  text-align: left;
+  animation: fadeSlideIn 0.35s ease;
+}
+
+.feedback-text {
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+}
+
+.feedback-correct {
+  background: rgba(22, 163, 74, 0.12);
+  border-left: 4px solid var(--correct);
+}
+
+.feedback-incorrect {
+  background: rgba(220, 38, 38, 0.12);
+  border-left: 4px solid var(--incorrect);
+}
+
+.feedback button {
+  width: 100%;
+}
+
+.round-subtitle {
+  color: var(--muted-text);
+  margin-top: -0.25rem;
+  margin-bottom: 1rem;
+}
+
 @keyframes pop {
   0% { transform: scale(1); }
   40% { transform: scale(1.08); }
